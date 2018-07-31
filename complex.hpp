@@ -1,8 +1,28 @@
 #pragma once
-#include<iostream>
-#include<math.h>
+#include <iostream>
+#include <string>
+#include <math.h>
 
-using namespace std;
+//using namespace std;
+
+template<typename T>
+inline T to_degrees(T x) noexcept	// значение угла x в градусах
+{
+	static_assert(std::is_floating_point<T>::value, "the template parameter must be a floating-point type");
+	return x * 180.0 / M_PI;
+}
+
+struct Complex_error{
+	std::string name;
+	Complex_error(const char* q):name(q){}
+	Complex_error(std::string s):name(s){}
+	std::string what() { return name; }
+};
+
+void error(const char* name)
+{
+	throw Complex_error(name);
+}
 
 template<typename T>
 class Complex
@@ -10,45 +30,42 @@ class Complex
 private:
 	T re, im;
 public:
-	explicit Complex(T r, T i) : re(r), im(i)
+	constexpr explicit Complex(T r, T i) noexcept  : re(r), im(i)
 	{
 		static_assert(std::is_floating_point<T>::value, "the template parameter must be a floating-point type");
 	}
-	explicit Complex(T r) : re(r), im(0.0) 
+	constexpr explicit Complex(T r) noexcept : re(r), im(0.0)
 	{
 		static_assert(std::is_floating_point<T>::value, "the template parameter must be a floating-point type");
 	}
-	explicit Complex() : re(0.0), im(0.0) 
+	constexpr explicit Complex() noexcept : re(0.0), im(0.0)
 	{
 		static_assert(std::is_floating_point<T>::value, "the template parameter must be a floating-point type");
 	}
 
-	T real() { return re; }
-	T imagin() { return im; }
+	constexpr inline T real() noexcept { return re; }
+	constexpr inline T imagin() noexcept { return im; }
 
-	friend Complex operator+(const Complex& A, const Complex& B) { return Complex(A.re + B.re, A.im + B.im); }
-	friend Complex operator+(const Complex& A, const T b) { return Complex(A.re + b, A.im); }
-	friend Complex operator+=(Complex& A, const Complex& B) { return A = A + B; }
-	friend Complex operator+=(Complex& A, const T b) { return A = A + b; }
+	constexpr friend Complex operator+(const Complex& A, const Complex& B) noexcept { return Complex(A.re + B.re, A.im + B.im); }
+	constexpr friend Complex operator+(const Complex& A, const T b) noexcept { return Complex(A.re + b, A.im); }
+	constexpr friend Complex operator+=(Complex& A, const Complex& B) noexcept { return A = A + B; }
+	constexpr friend Complex operator+=(Complex& A, const T b) noexcept { return A = A + b; }
 
-	friend Complex operator-(const Complex& A, const Complex& B) { return Complex(A.re - B.re, A.im - B.im); }
-	friend Complex operator-(const Complex& A, const T b) { return Complex(A.re - b, A.im); }
-	friend Complex operator-=(Complex& A, const Complex& B) { return A = A - B; }
-	friend Complex operator-=(Complex& A, const T b) { return A = A - b; }
+	constexpr friend Complex operator-(const Complex& A, const Complex& B) noexcept { return Complex(A.re - B.re, A.im - B.im); }
+	constexpr friend Complex operator-(const Complex& A, const T b) noexcept { return Complex(A.re - b, A.im); }
+	constexpr friend Complex operator-=(Complex& A, const Complex& B) noexcept { return A = A - B; }
+	constexpr friend Complex operator-=(Complex& A, const T b) noexcept { return A = A - b; }
 
-	friend Complex operator*(const Complex& A, const Complex& B)
+	constexpr friend Complex operator*(const Complex& A, const Complex& B){ return Complex(A.re * B.re - A.im * B.im, A.re * B.im + A.im * B.re); }
+	constexpr friend Complex operator*(const Complex& A, const T b) { return Complex(A.re * b, A.im * b); }
+	constexpr friend Complex operator*=(Complex& A, const Complex& B) { return A = A * B; }
+	constexpr friend Complex operator*=(Complex& A, const T b) { return A = A * b; }
+
+	constexpr friend Complex operator/(const Complex& A, const Complex& B)
 	{
-		Complex C;
-		C.re = A.re * B.re + A.im * B.im * (-1);
-		C.im = A.re * B.im + A.im * B.re;
-		return C;
-	}
-	friend Complex operator*(const Complex& A, const T b) { return Complex(A.re * b, A.im * b); }
-	friend Complex operator*=(Complex& A, const Complex& B) { return A = A * B; }
-	friend Complex operator*=(Complex& A, const T b) { return A = A * b; }
+		if(B.re == 0 && B.im == 0)
+			error("division by zero");
 
-	friend Complex operator/(const Complex& A, const Complex& B)
-	{
 		Complex tmp(B.re, B.im * (-1));
 
 		Complex N = A * tmp;
@@ -56,41 +73,50 @@ public:
 
 		return Complex(N.re / D.re, N.im / D.re);
 	}
-	friend Complex operator/(const Complex& A, const T b) { return Complex(A.re / b, A.im / b); }
-	friend Complex operator/=(Complex& A, const Complex& B) { return A = A / B; }
-	friend Complex operator/=(Complex& A, const T b) { return A = A / b; }
+	constexpr inline friend Complex operator/(const Complex& A, const T b) 
+	{ 
+		if(b == 0)
+			error("division by zero");
 
-	friend bool operator==(const Complex& A, const Complex& B) { return (A.re == B.re && A.im == B.im); }
-	friend bool operator!=(const Complex& A, const Complex& B) { return !(A == B); }
+		return Complex(A.re / b, A.im / b); 
+	}
+	constexpr friend Complex operator/=(Complex& A, const Complex& B) { return A = A / B; }
+	constexpr friend Complex operator/=(Complex& A, const T b) { return A = A / b; }
 
-	friend ostream& operator<<(ostream& os, const Complex& C)
+	constexpr inline friend bool operator==(const Complex& A, const Complex& B) noexcept { return (A.re == B.re && A.im == B.im); }
+	constexpr inline friend bool operator!=(const Complex& A, const Complex& B) noexcept { return !(A == B); }
+
+	friend std::ostream& operator<<(std::ostream& os, const Complex& C)
 	{
 		if (C.re == 0)
 		{
 			if (C.im == 0) {
-				os << "z = 0";
+				os << "0";
 				return os;
 			}
 			else {
-				os << "z = " << C.im << "i";
+				os << C.im << "i";
 				return os;
 			}
 		}
 		else {
 			if (C.im == 0) {
-				os << "z = " << C.re;
+				os << C.re;
 				return os;
 			}
-			else {
-				os << "z = " << C.re << " + " << C.im << "i";
+			else if(C.im > 0){
+				os << C.re << " + " << C.im << "i";
 				return os;
+			}
+			else{
+				os << C.re << " " << C.im << "i"; 
 			}
 		}
 
 		return os;
 	}
 
-	T arg(const Complex& C)
+	friend T arg(const Complex& C)
 	{
 		if (C.re == 0)
 		{
@@ -103,7 +129,7 @@ public:
 		}
 
 		if (C.re > 0)
-			return atan(C.im / C.re);
+			return std::atan2(C.im, C.re);
 
 		if (C.re < 0)
 		{
@@ -111,28 +137,28 @@ public:
 				return 180.0;
 
 			if (C.im > 0)
-				return 180.0 + atan(C.im / C.re);
+				return std::atan2(C.im, C.re) + 180.0;
 
 			if (C.im < 0)
-				return -180.0 + atan(C.im / C.re);
+				return std::atan2(C.im, C.re) - 180.0;
 		}
 	}
 
-	T abs(const Complex& C) { return std::sqrt(C.re * C.re + C.im * C.im); }
+	friend T abs(const Complex& C) { return std::sqrt(C.re * C.re + C.im * C.im); }
 
-	Complex pow(const Complex& C, T n)
+	friend Complex pow(const Complex& C, T n = 2.0)
 	{
 		T tmp = std::pow(abs(C), n);
 		T a = arg(C);
 
-		return Complex(tmp * cos(n * a), tmp * sin(n * a));
+		return Complex(tmp * std::cos(n * a), tmp * std::sin(n * a));
 	}
 	
-	Complex sqrt(const Complex& C, T n)
+	friend Complex sqrt(const Complex& C, T n = 2.0)
 	{
 		T tmp = std::pow(abs(C), 1 / n);
 		T a = arg(C);
 
-		return Complex(tmp * cos(a / n), tmp * sin(a / n));
+		return Complex(tmp * std::cos(a / n), tmp * std::sin(a / n));
 	}
 };
