@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <stdexcept>
 #include "complex.hpp"
 
 using namespace std;
@@ -22,7 +23,7 @@ int main()
 		cout << "pow(A) = " << pow(A) << endl;
 		cout << "abs(A) = " << abs(A) << endl;
 	}
-	catch(Complex_error err){
+	catch(runtime_error err){
 		cout << err.what() << endl;
 	}
 
