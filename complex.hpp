@@ -3,8 +3,6 @@
 #include <string>
 #include <math.h>
 
-//using namespace std;
-
 template<typename T>
 inline T to_degrees(T x) noexcept	// значение угла x в градусах
 {
@@ -92,21 +90,17 @@ public:
 		{
 			if (C.im == 0) {
 				os << "0";
-				return os;
 			}
 			else {
 				os << C.im << "i";
-				return os;
 			}
 		}
 		else {
 			if (C.im == 0) {
 				os << C.re;
-				return os;
 			}
 			else if(C.im > 0){
 				os << C.re << " + " << C.im << "i";
-				return os;
 			}
 			else{
 				os << C.re << " " << C.im << "i"; 
