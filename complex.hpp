@@ -54,10 +54,10 @@ public:
 	constexpr friend Complex operator-=(Complex& A, const Complex& B) noexcept { return A = A - B; }
 	constexpr friend Complex operator-=(Complex& A, const T b) noexcept { return A = A - b; }
 
-	constexpr friend Complex operator*(const Complex& A, const Complex& B){ return Complex(A.re * B.re - A.im * B.im, A.re * B.im + A.im * B.re); }
-	constexpr friend Complex operator*(const Complex& A, const T b) { return Complex(A.re * b, A.im * b); }
-	constexpr friend Complex operator*=(Complex& A, const Complex& B) { return A = A * B; }
-	constexpr friend Complex operator*=(Complex& A, const T b) { return A = A * b; }
+	constexpr friend Complex operator*(const Complex& A, const Complex& B) noexcept { return Complex(A.re * B.re - A.im * B.im, A.re * B.im + A.im * B.re); }
+	constexpr friend Complex operator*(const Complex& A, const T b) noexcept { return Complex(A.re * b, A.im * b); }
+	constexpr friend Complex operator*=(Complex& A, const Complex& B) noexcept { return A = A * B; }
+	constexpr friend Complex operator*=(Complex& A, const T b) noexcept { return A = A * b; }
 
 	constexpr friend Complex operator/(const Complex& A, const Complex& B)
 	{
