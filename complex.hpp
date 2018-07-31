@@ -4,7 +4,7 @@
 #include <math.h>
 
 template<typename T>
-inline T to_degrees(T x) noexcept	// значение угла x в градусах
+inline T to_degrees(T x) noexcept
 {
 	static_assert(std::is_floating_point<T>::value, "the template parameter must be a floating-point type");
 	return x * 180.0 / M_PI;
@@ -88,23 +88,18 @@ public:
 	{
 		if (C.re == 0)
 		{
-			if (C.im == 0) {
+			if (C.im == 0)
 				os << "0";
-			}
-			else {
+			else
 				os << C.im << "i";
-			}
 		}
 		else {
-			if (C.im == 0) {
+			if (C.im == 0)
 				os << C.re;
-			}
-			else if(C.im > 0){
+			else if(C.im > 0)
 				os << C.re << " + " << C.im << "i";
-			}
-			else{
+			else
 				os << C.re << " " << C.im << "i"; 
-			}
 		}
 
 		return os;
