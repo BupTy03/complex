@@ -36,7 +36,7 @@ public:
 	{
 		static_assert(std::is_floating_point<T>::value, "the template parameter must be a floating-point type");
 	}
-	constexpr explicit Complex() noexcept : re(0.0), im(0.0)
+	constexpr Complex() noexcept : re(0.0), im(0.0)
 	{
 		static_assert(std::is_floating_point<T>::value, "the template parameter must be a floating-point type");
 	}
