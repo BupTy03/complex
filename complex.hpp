@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include <stdexcept>
 #include <math.h>
 
 template<typename T>
@@ -10,11 +11,9 @@ inline T to_degrees(T x) noexcept
 	return x * 180.0 / M_PI;
 }
 
-struct Complex_error{
-	std::string name;
-	Complex_error(const char* q):name(q){}
-	Complex_error(std::string s):name(s){}
-	std::string what() { return name; }
+struct Complex_error : std::runtime_error{
+	Complex_error(const char* q) : std::runtime_error(q){}
+	Complex_error(std::string s) : std::runtime_error(s){}
 };
 
 void error(const char* name)
