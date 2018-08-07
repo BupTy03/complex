@@ -23,7 +23,7 @@ int main()
 		cout << "pow(A) = " << pow(A) << endl;
 		cout << "abs(A) = " << abs(A) << endl;
 	}
-	catch(runtime_error err){
+	catch(runtime_error& err){
 		cout << err.what() << endl;
 	}
 

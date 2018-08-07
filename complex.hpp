@@ -12,8 +12,8 @@ inline T to_degrees(T x) noexcept
 }
 
 struct Complex_error : std::runtime_error{
-	Complex_error(const char* q) : std::runtime_error(q){}
-	Complex_error(std::string s) : std::runtime_error(s){}
+	explicit Complex_error(const char* q) : std::runtime_error(q){}
+	explicit Complex_error(const std::string& s) : std::runtime_error(s){}
 };
 
 void error(const char* name)
