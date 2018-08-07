@@ -2,10 +2,11 @@
 #include <iostream>
 #include <string>
 #include <stdexcept>
+#define _USE_MATH_DEFINES
 #include <math.h>
 
 template<typename T>
-inline T to_degrees(T x) noexcept
+constexpr inline T to_degrees(T x) noexcept
 {
 	static_assert(std::is_floating_point<T>::value, "the template parameter must be a floating-point type");
 	return x * 180.0 / M_PI;
@@ -117,7 +118,7 @@ public:
 		}
 
 		if (C.re > 0)
-			return std::atan2(C.im, C.re);
+			return atan2(C.im, C.re);
 
 		if (C.re < 0)
 		{
@@ -125,28 +126,28 @@ public:
 				return 180.0;
 
 			if (C.im > 0)
-				return std::atan2(C.im, C.re) + 180.0;
+				return atan2(C.im, C.re) + 180.0;
 
 			if (C.im < 0)
-				return std::atan2(C.im, C.re) - 180.0;
+				return atan2(C.im, C.re) - 180.0;
 		}
 	}
 
-	friend T abs(const Complex& C) { return std::sqrt(C.re * C.re + C.im * C.im); }
+	friend T abs(const Complex& C) { return sqrt(C.re * C.re + C.im * C.im); }
 
 	friend Complex pow(const Complex& C, T n = 2.0)
 	{
-		T tmp = std::pow(abs(C), n);
+		T tmp = pow(abs(C), n);
 		T a = arg(C);
 
-		return Complex(tmp * std::cos(n * a), tmp * std::sin(n * a));
+		return Complex(tmp * cos(n * a), tmp * sin(n * a));
 	}
 	
 	friend Complex sqrt(const Complex& C, T n = 2.0)
 	{
-		T tmp = std::pow(abs(C), 1 / n);
+		T tmp = pow(abs(C), 1 / n);
 		T a = arg(C);
 
-		return Complex(tmp * std::cos(a / n), tmp * std::sin(a / n));
+		return Complex(tmp * cos(a / n), tmp * sin(a / n));
 	}
 };
